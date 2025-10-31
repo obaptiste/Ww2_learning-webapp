@@ -1,0 +1,130 @@
+[
+  {
+    "id": "eastern-front",
+    "title": "Eastern Front: The Brutal War",
+    "theater": "Europe",
+    "steps": [
+      {
+        "focus": {"lat": 52.23, "lon": 21.01, "altitude": 2.5},
+        "highlight_ids": ["invasion-poland"],
+        "narration": "September 1939: Germany invades Poland from the west, marking the start of WWII. The Soviet Union invades from the east.",
+        "year": 1939
+      },
+      {
+        "focus": {"lat": 55.75, "lon": 37.62, "altitude": 2.2},
+        "highlight_ids": ["operation-barbarossa"],
+        "narration": "June 1941: Operation Barbarossa begins - Germany launches the largest invasion in history against the Soviet Union with over 3 million troops.",
+        "year": 1941
+      },
+      {
+        "focus": {"lat": 48.708, "lon": 44.514, "altitude": 2.0},
+        "highlight_ids": ["stalingrad"],
+        "narration": "August 1942-February 1943: The Battle of Stalingrad. One of the bloodiest battles in history becomes the turning point on the Eastern Front.",
+        "year": 1942
+      },
+      {
+        "focus": {"lat": 51.73, "lon": 36.193, "altitude": 2.2},
+        "highlight_ids": ["kursk"],
+        "narration": "July 1943: The Battle of Kursk - the largest tank battle in history. After this defeat, Germany never regained the offensive on the Eastern Front.",
+        "year": 1943
+      },
+      {
+        "focus": {"lat": 52.52, "lon": 13.4, "altitude": 2.0},
+        "highlight_ids": ["berlin"],
+        "narration": "April 1945: The Battle of Berlin. Soviet forces encircle and capture the German capital, leading to Germany's unconditional surrender.",
+        "year": 1945
+      }
+    ],
+    "autoplay_interval_ms": 4000
+  },
+  {
+    "id": "pacific-war",
+    "title": "Pacific Theater: Island by Island",
+    "theater": "Pacific",
+    "steps": [
+      {
+        "focus": {"lat": 21.3, "lon": -157.8, "altitude": 2.5},
+        "highlight_ids": ["pearl-harbor"],
+        "narration": "December 7, 1941: Japan's surprise attack on Pearl Harbor brings the United States into the war. 'A date which will live in infamy.'",
+        "year": 1941
+      },
+      {
+        "focus": {"lat": 28.2, "lon": -177.4, "altitude": 2.5},
+        "highlight_ids": ["midway"],
+        "narration": "June 1942: The Battle of Midway. American forces sink four Japanese carriers, marking the turning point of the Pacific War.",
+        "year": 1942
+      },
+      {
+        "focus": {"lat": -9.5, "lon": 160.2, "altitude": 2.3},
+        "highlight_ids": ["guadalcanal"],
+        "narration": "August 1942-February 1943: Guadalcanal campaign. The first major Allied offensive marks the transition from defense to offense.",
+        "year": 1942
+      },
+      {
+        "focus": {"lat": 24.75, "lon": 141.3, "altitude": 2.5},
+        "highlight_ids": ["iwo-jima"],
+        "narration": "February-March 1945: Iwo Jima. American forces capture this strategic island after fierce fighting. The iconic flag-raising photograph becomes a symbol of the war.",
+        "year": 1945
+      },
+      {
+        "focus": {"lat": 26.5, "lon": 128.0, "altitude": 2.3},
+        "highlight_ids": ["okinawa"],
+        "narration": "April-June 1945: The Battle of Okinawa. The last and largest amphibious assault in the Pacific. Its ferocity influences the decision to use atomic weapons.",
+        "year": 1945
+      }
+    ],
+    "autoplay_interval_ms": 4500
+  },
+  {
+    "id": "western-liberation",
+    "title": "Liberation of Western Europe",
+    "theater": "Europe",
+    "steps": [
+      {
+        "focus": {"lat": 37.5, "lon": 14.0, "altitude": 2.4},
+        "highlight_ids": ["sicily"],
+        "narration": "July 1943: Allied forces invade Sicily. This campaign leads to the downfall of Mussolini and Italy's eventual surrender.",
+        "year": 1943
+      },
+      {
+        "focus": {"lat": 49.3, "lon": -0.5, "altitude": 2.0},
+        "highlight_ids": ["normandy"],
+        "narration": "June 6, 1944: D-Day. Over 156,000 Allied troops land on the beaches of Normandy in the largest amphibious invasion in history.",
+        "year": 1944
+      },
+      {
+        "focus": {"lat": 50.0, "lon": 5.75, "altitude": 2.3},
+        "highlight_ids": ["battle-bulge"],
+        "narration": "December 1944-January 1945: The Battle of the Bulge. Germany's last major offensive fails despite initial success in the Ardennes.",
+        "year": 1944
+      },
+      {
+        "focus": {"lat": 52.52, "lon": 13.4, "altitude": 2.0},
+        "highlight_ids": ["berlin"],
+        "narration": "April-May 1945: The fall of Berlin marks the end of Nazi Germany. Hitler commits suicide, and Germany surrenders unconditionally.",
+        "year": 1945
+      }
+    ],
+    "autoplay_interval_ms": 4000
+  },
+  {
+    "id": "north-africa",
+    "title": "The Desert War",
+    "theater": "Africa",
+    "steps": [
+      {
+        "focus": {"lat": 30.8, "lon": 28.9, "altitude": 2.5},
+        "highlight_ids": ["el-alamein"],
+        "narration": "October-November 1942: The Second Battle of El Alamein. British forces under Montgomery defeat Rommel's Afrika Korps, turning the tide in North Africa.",
+        "year": 1942
+      },
+      {
+        "focus": {"lat": 37.5, "lon": 14.0, "altitude": 2.8},
+        "highlight_ids": ["sicily"],
+        "narration": "July 1943: With North Africa secured, the Allies use it as a springboard to invade Sicily and then mainland Europe.",
+        "year": 1943
+      }
+    ],
+    "autoplay_interval_ms": 5000
+  }
+]

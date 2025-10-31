@@ -1,0 +1,302 @@
+[
+  {
+    "id": "invasion-poland",
+    "name": "Invasion of Poland",
+    "date": "1939-09-01",
+    "year": 1939,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 52.23,
+    "lon": 21.01,
+    "location": "Warsaw, Poland",
+    "belligerents": ["Nazi Germany", "Soviet Union", "Poland"],
+    "outcome": "Axis victory",
+    "casualties_est": 200000,
+    "casualties_low": 150000,
+    "casualties_high": 250000,
+    "summary": "The invasion of Poland marked the beginning of World War II. Germany invaded from the west while the Soviet Union invaded from the east.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Invasion_of_Poland"}
+    ]
+  },
+  {
+    "id": "battle-britain",
+    "name": "Battle of Britain",
+    "date": "1940-07-10",
+    "year": 1940,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 51.5,
+    "lon": -0.12,
+    "location": "United Kingdom",
+    "belligerents": ["United Kingdom", "Nazi Germany"],
+    "outcome": "British victory",
+    "casualties_est": 50000,
+    "casualties_low": 45000,
+    "casualties_high": 60000,
+    "summary": "The first major military campaign fought entirely by air forces. The RAF successfully defended the UK against large-scale attacks by the Luftwaffe.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Battle_of_Britain"}
+    ]
+  },
+  {
+    "id": "pearl-harbor",
+    "name": "Attack on Pearl Harbor",
+    "date": "1941-12-07",
+    "year": 1941,
+    "theater": "Pacific",
+    "type": "engagement",
+    "lat": 21.3,
+    "lon": -157.8,
+    "location": "Oahu, Hawaii, USA",
+    "belligerents": ["Japan", "United States"],
+    "outcome": "Japanese tactical victory",
+    "casualties_est": 2400,
+    "casualties_low": 2335,
+    "casualties_high": 2500,
+    "summary": "A surprise military strike by the Imperial Japanese Navy Air Service that brought the United States into World War II.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Attack_on_Pearl_Harbor"}
+    ]
+  },
+  {
+    "id": "operation-barbarossa",
+    "name": "Operation Barbarossa",
+    "date": "1941-06-22",
+    "year": 1941,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 55.75,
+    "lon": 37.62,
+    "location": "Western Soviet Union",
+    "belligerents": ["Nazi Germany", "Soviet Union"],
+    "outcome": "Soviet strategic victory",
+    "casualties_est": 5000000,
+    "casualties_low": 4500000,
+    "casualties_high": 5500000,
+    "summary": "The code name for the invasion of the Soviet Union by Nazi Germany and its Axis allies. The largest military operation in history by troop numbers.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Operation_Barbarossa"}
+    ]
+  },
+  {
+    "id": "midway",
+    "name": "Battle of Midway",
+    "date": "1942-06-04",
+    "year": 1942,
+    "theater": "Pacific",
+    "type": "engagement",
+    "lat": 28.2,
+    "lon": -177.4,
+    "location": "Midway Atoll, Pacific Ocean",
+    "belligerents": ["United States", "Japan"],
+    "outcome": "American decisive victory",
+    "casualties_est": 3000,
+    "casualties_low": 2800,
+    "casualties_high": 3500,
+    "summary": "A decisive naval battle that permanently weakened Japan's naval power and is considered the turning point of the Pacific campaign.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Battle_of_Midway"}
+    ]
+  },
+  {
+    "id": "stalingrad",
+    "name": "Battle of Stalingrad",
+    "date": "1942-08-23",
+    "year": 1942,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 48.708,
+    "lon": 44.514,
+    "location": "Volgograd (Stalingrad), Russia",
+    "belligerents": ["Soviet Union", "Nazi Germany", "Romania", "Italy"],
+    "outcome": "Soviet victory",
+    "casualties_est": 2000000,
+    "casualties_low": 1800000,
+    "casualties_high": 2500000,
+    "summary": "One of the bloodiest battles in history. The Soviet victory marked the beginning of the German retreat on the Eastern Front.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Battle_of_Stalingrad"}
+    ]
+  },
+  {
+    "id": "el-alamein",
+    "name": "Second Battle of El Alamein",
+    "date": "1942-10-23",
+    "year": 1942,
+    "theater": "Africa",
+    "type": "campaign",
+    "lat": 30.8,
+    "lon": 28.9,
+    "location": "El Alamein, Egypt",
+    "belligerents": ["Allies", "Axis"],
+    "outcome": "Allied victory",
+    "casualties_est": 30000,
+    "casualties_low": 25000,
+    "casualties_high": 35000,
+    "summary": "A major Allied victory in North Africa that stopped Axis advances toward Egypt and the Suez Canal.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Second_Battle_of_El_Alamein"}
+    ]
+  },
+  {
+    "id": "guadalcanal",
+    "name": "Battle of Guadalcanal",
+    "date": "1942-08-07",
+    "year": 1942,
+    "theater": "Pacific",
+    "type": "campaign",
+    "lat": -9.5,
+    "lon": 160.2,
+    "location": "Guadalcanal, Solomon Islands",
+    "belligerents": ["United States", "Japan"],
+    "outcome": "American victory",
+    "casualties_est": 50000,
+    "casualties_low": 45000,
+    "casualties_high": 60000,
+    "summary": "A major campaign in the Pacific theater that marked the transition from defensive to offensive operations by the Allies.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Guadalcanal_campaign"}
+    ]
+  },
+  {
+    "id": "kursk",
+    "name": "Battle of Kursk",
+    "date": "1943-07-05",
+    "year": 1943,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 51.73,
+    "lon": 36.193,
+    "location": "Kursk, Russia",
+    "belligerents": ["Soviet Union", "Nazi Germany"],
+    "outcome": "Soviet victory",
+    "casualties_est": 800000,
+    "casualties_low": 700000,
+    "casualties_high": 1000000,
+    "summary": "The largest tank battle in history. After the German offensive was defeated, the Soviet Union maintained the offensive for the rest of the war.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Battle_of_Kursk"}
+    ]
+  },
+  {
+    "id": "sicily",
+    "name": "Allied Invasion of Sicily",
+    "date": "1943-07-09",
+    "year": 1943,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 37.5,
+    "lon": 14.0,
+    "location": "Sicily, Italy",
+    "belligerents": ["Allies", "Axis"],
+    "outcome": "Allied victory",
+    "casualties_est": 40000,
+    "casualties_low": 35000,
+    "casualties_high": 45000,
+    "summary": "A major campaign that led to the downfall of Mussolini and Italy's withdrawal from the war.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Allied_invasion_of_Sicily"}
+    ]
+  },
+  {
+    "id": "normandy",
+    "name": "Battle of Normandy (D-Day)",
+    "date": "1944-06-06",
+    "year": 1944,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 49.3,
+    "lon": -0.5,
+    "location": "Normandy, France",
+    "belligerents": ["Allies", "Nazi Germany"],
+    "outcome": "Allied victory",
+    "casualties_est": 425000,
+    "casualties_low": 400000,
+    "casualties_high": 450000,
+    "summary": "The largest amphibious invasion in military history, marking the beginning of the liberation of Western Europe from Nazi occupation.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Operation_Overlord"}
+    ]
+  },
+  {
+    "id": "battle-bulge",
+    "name": "Battle of the Bulge",
+    "date": "1944-12-16",
+    "year": 1944,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 50.0,
+    "lon": 5.75,
+    "location": "Ardennes, Belgium",
+    "belligerents": ["Allies", "Nazi Germany"],
+    "outcome": "Allied victory",
+    "casualties_est": 185000,
+    "casualties_low": 170000,
+    "casualties_high": 200000,
+    "summary": "Germany's last major offensive campaign on the Western Front. Despite initial German gains, the Allies successfully repelled the attack.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Battle_of_the_Bulge"}
+    ]
+  },
+  {
+    "id": "iwo-jima",
+    "name": "Battle of Iwo Jima",
+    "date": "1945-02-19",
+    "year": 1945,
+    "theater": "Pacific",
+    "type": "engagement",
+    "lat": 24.75,
+    "lon": 141.3,
+    "location": "Iwo Jima, Japan",
+    "belligerents": ["United States", "Japan"],
+    "outcome": "American victory",
+    "casualties_est": 27000,
+    "casualties_low": 25000,
+    "casualties_high": 30000,
+    "summary": "A major battle where the United States captured the island of Iwo Jima from the Japanese. Famous for the iconic flag-raising photograph.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Battle_of_Iwo_Jima"}
+    ]
+  },
+  {
+    "id": "okinawa",
+    "name": "Battle of Okinawa",
+    "date": "1945-04-01",
+    "year": 1945,
+    "theater": "Pacific",
+    "type": "campaign",
+    "lat": 26.5,
+    "lon": 128.0,
+    "location": "Okinawa, Japan",
+    "belligerents": ["United States", "Japan"],
+    "outcome": "American victory",
+    "casualties_est": 200000,
+    "casualties_low": 180000,
+    "casualties_high": 240000,
+    "summary": "The largest amphibious assault in the Pacific War. The fierce resistance influenced the decision to use atomic bombs.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Battle_of_Okinawa"}
+    ]
+  },
+  {
+    "id": "berlin",
+    "name": "Battle of Berlin",
+    "date": "1945-04-16",
+    "year": 1945,
+    "theater": "Europe",
+    "type": "campaign",
+    "lat": 52.52,
+    "lon": 13.4,
+    "location": "Berlin, Germany",
+    "belligerents": ["Soviet Union", "Nazi Germany"],
+    "outcome": "Soviet victory",
+    "casualties_est": 1300000,
+    "casualties_low": 1100000,
+    "casualties_high": 1500000,
+    "summary": "The final major offensive of the European theater. The battle ended with the unconditional surrender of Nazi Germany.",
+    "links": [
+      {"label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Battle_of_Berlin"}
+    ]
+  }
+]

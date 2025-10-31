@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WWII Battles Globe</title>
+  <style>
+    /* ========== CSS Variables for Theming ========== */
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-panel: #ffffff;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --text-on-dark: #ffffff;
+      --border-color: #e0e0e0;
+      --accent-color: #4a6b5d;
+      --accent-hover: #6b8577;
+      --focus-ring: #4a90e2;
+      --error-color: #d32f2f;
+      --campaign-color: #ff9800;
+      --engagement-color: #2196f3;
+    }
+
+    /* High Contrast Theme */
+    [data-theme="hc"] {
+      --bg-primary: #000000;
+      --bg-secondary: #000000;
+      --bg-panel: #ffffff;
+      --text-primary: #000000;
+      --text-secondary: #000000;
+      --text-on-dark: #ffff00;
+      --border-color: #000000;
+      --accent-color: #0000ff;
+      --accent-hover: #0000cc;
+      --focus-ring: #ffff00;
+      --campaign-color: #ff0000;
+      --engagement-color: #00ff00;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-on-dark);
+      overflow: hidden;
+    }
+
+    /* ========== Main Layout ========== */
+    #app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #header {
+      background: var(--bg-panel);
+      color: var(--text-primary);
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+
+    #header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    /* ========== Controls Bar ========== */
+    #controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    input[type="text"],
+    select {
+      padding: 8px 12px;
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+      color: var(--text-primary);
+      min-width: 150px;
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    button:focus,
+    input[type="checkbox"]:focus,
+    input[type="range"]:focus {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent-color);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    /* ========== Year Slider ========== */
+    #year-control {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 300px;
+    }
+
+    #year-slider {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border-color);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    #year-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      cursor: pointer;
+    }
+
+    #year-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      cursor: pointer;
+      border: none;
+    }
+
+    #year-display {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-color);
+      min-width: 50px;
+      text-align: center;
+    }
+
+    /* ========== Main Content Area ========== */
+    #main-content {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #globe-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ========== Side Panel ========== */
+    #side-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 400px;
+      max-width: calc(100vw - 40px);
+      max-height: calc(100vh - 140px);
+      background: var(--bg-panel);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 50;
+    }
+
+    #side-panel.active {
+      display: flex;
+    }
+
+    /* Tab Navigation */
+    .tab-list {
+      display: flex;
+      border-bottom: 2px solid var(--border-color);
+      background: var(--bg-panel);
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      color: var(--text-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab-button:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .tab-button.active {
+      color: var(--accent-color);
+      border-bottom-color: var(--accent-color);
+    }
+
+    .tab-panel {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Close Button */
+    #close-panel {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      padding: 0;
+      z-index: 10;
+    }
+
+    /* ========== Details Panel Content ========== */
+    #details-content h2 {
+      color: var(--text-primary);
+      font-size: 22px;
+      margin-bottom: 12px;
+      padding-right: 40px;
+    }
+
+    .detail-row {
+      margin-bottom: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .narration {
+      background: rgba(74, 107, 93, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-style: italic;
+      color: var(--text-primary);
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .link-button {
+      padding: 6px 12px;
+      font-size: 12px;
+      background: var(--accent-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .link-button:hover {
+      background: var(--accent-hover);
+    }
+
+    /* ========== List View Table ========== */
+    #list-content {
+      padding: 0;
+    }
+
+    #battles-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #battles-table th {
+      position: sticky;
+      top: 0;
+      background: var(--bg-panel);
+      padding: 12px 8px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 2px solid var(--border-color);
+      text-transform: uppercase;
+    }
+
+    #battles-table td {
+      padding: 12px 8px;
+      font-size: 13px;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    #battles-table tbody tr {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #battles-table tbody tr:hover {
+      background: rgba(74, 107, 93, 0.1);
+    }
+
+    #battles-table tbody tr:focus {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: -2px;
+    }
+
+    #battles-table tbody tr.selected {
+      background: rgba(74, 107, 93, 0.2);
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .type-campaign {
+      background: var(--campaign-color);
+    }
+
+    .type-engagement {
+      background: var(--engagement-color);
+    }
+
+    /* ========== Chapter Controls ========== */
+    #chapter-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    #chapter-nav {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #chapter-nav.active {
+      display: flex;
+    }
+
+    /* ========== Layer Filters ========== */
+    .checkbox-group {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== Accessibility Helpers ========== */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Help Tooltip */
+    #help-tooltip {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: var(--bg-panel);
+      color: var(--text-primary);
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      max-width: 300px;
+      display: none;
+      z-index: 100;
+    }
+
+    #help-tooltip.active {
+      display: block;
+    }
+
+    #help-tooltip h3 {
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    #help-tooltip ul {
+      list-style: none;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    #help-tooltip kbd {
+      background: var(--border-color);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 11px;
+    }
+
+    /* No Results Message */
+    .no-results {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Loading Indicator */
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: var(--text-on-dark);
+      font-size: 18px;
+      z-index: 10;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== Responsive Design ========== */
+    @media (max-width: 768px) {
+      #header {
+        padding: 12px 16px;
+      }
+
+      #header h1 {
+        font-size: 20px;
+      }
+
+      #controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #side-panel {
+        width: calc(100vw - 40px);
+        max-height: calc(100vh - 100px);
+      }
+
+      input[type="text"],
+      select {
+        width: 100%;
+      }
+    }
+
+    /* ========== Reduced Motion ========== */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app-container">
+    <!-- Header with Controls -->
+    <header id="header">
+      <h1 id="app-title">WWII Battles Globe</h1>
+      
+      <div id="controls">
+        <!-- Search -->
+        <div class="control-group">
+          <label for="search-input" id="search-label">Search:</label>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search battle, place, country..."
+            aria-labelledby="search-label"
+          >
+        </div>
+
+        <!-- Theater Filter -->
+        <div class="control-group">
+          <label for="theater-filter" id="theater-label">Theater:</label>
+          <select id="theater-filter" aria-labelledby="theater-label">
+            <option value="all">All Theaters</option>
+            <option value="Europe">Europe</option>
+            <option value="Pacific">Pacific</option>
+            <option value="Africa">Africa</option>
+            <option value="Asia">Asia</option>
+            <option value="Atlantic">Atlantic</option>
+            <option value="Arctic">Arctic</option>
+            <option value="Middle East">Middle East</option>
+          </select>
+        </div>
+
+        <!-- Layer Filters -->
+        <div class="control-group">
+          <label id="layers-label">Layers:</label>
+          <div class="checkbox-group" role="group" aria-labelledby="layers-label">
+            <label class="checkbox-label">
+              <input type="checkbox" id="show-campaigns" checked>
+              <span id="campaigns-label">Campaigns</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="show-engagements" checked>
+              <span id="engagements-label">Engagements</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Year Control with Cumulative Toggle -->
+        <div class="control-group" id="year-control">
+          <label for="year-slider" id="year-label">Year:</label>
+          <input 
+            type="range" 
+            id="year-slider" 
+            min="1939" 
+            max="1945" 
+            value="1942"
+            aria-labelledby="year-label"
+            aria-valuetext="1942"
+          >
+          <span id="year-display" aria-live="polite">1942</span>
+          <label class="checkbox-label">
+            <input type="checkbox" id="cumulative-mode">
+            <span id="cumulative-label">Cumulative</span>
+          </label>
+          <button id="play-pause" aria-label="Play timeline">▶️ Play</button>
+        </div>
+
+        <!-- Chapter Controls -->
+        <div class="control-group" id="chapter-controls">
+          <label for="chapter-select" id="chapters-label">Chapters:</label>
+          <select id="chapter-select" aria-labelledby="chapters-label">
+            <option value="">Select a chapter...</option>
+          </select>
+          <div id="chapter-nav">
+            <button id="chapter-prev" aria-label="Previous step">◀</button>
+            <span id="chapter-step" aria-live="polite">1/1</span>
+            <button id="chapter-next" aria-label="Next step">▶</button>
+            <button id="chapter-play" aria-label="Play chapter">▶️</button>
+          </div>
+        </div>
+
+        <!-- Theme & Language -->
+        <div class="control-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="hc-toggle">
+            <span id="theme-hc-label">High Contrast</span>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label for="language-select" id="language-label">Language:</label>
+          <select id="language-select" aria-labelledby="language-label">
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <div id="globe-container">
+        <div id="loading">
+          <div class="spinner"></div>
+          <div>Loading globe...</div>
+        </div>
+      </div>
+
+      <!-- Side Panel with Tabs -->
+      <aside id="side-panel" role="complementary" aria-label="Battle information">
+        <button id="close-panel" aria-label="Close panel">×</button>
+        
+        <nav class="tab-list" role="tablist">
+          <button 
+            class="tab-button active" 
+            role="tab" 
+            aria-selected="true" 
+            aria-controls="details-content"
+            id="details-tab"
+          >
+            <span id="details-tab-label">Details</span>
+          </button>
+          <button 
+            class="tab-button" 
+            role="tab" 
+            aria-selected="false" 
+            aria-controls="list-content"
+            id="list-tab"
+          >
+            <span id="list-tab-label">List View</span>
+          </button>
+        </nav>
+
+        <div id="details-content" class="tab-panel active" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
+          <!-- Details populated dynamically -->
+        </div>
+
+        <div id="list-content" class="tab-panel" role="tabpanel" aria-labelledby="list-tab">
+          <table id="battles-table">
+            <thead>
+              <tr>
+                <th id="col-name">Name</th>
+                <th id="col-date">Date</th>
+                <th id="col-type">Type</th>
+                <th id="col-casualties">Casualties</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Help Tooltip -->
+  <div id="help-tooltip" role="tooltip" aria-live="polite">
+    <h3>Keyboard Shortcuts</h3>
+    <ul>
+      <li><kbd>←</kbd>/<kbd>→</kbd> Year -/+ 1</li>
+      <li><kbd>Shift</kbd>+<kbd>←</kbd>/<kbd>→</kbd> Year -/+ 5</li>
+      <li><kbd>/</kbd> Focus search</li>
+      <li><kbd>Tab</kbd> Navigate list</li>
+      <li><kbd>Enter</kbd>/<kbd>Space</kbd> Select</li>
+      <li><kbd>?</kbd> Toggle this help</li>
+    </ul>
+  </div>
+
+  <!-- Three.js and Globe libraries from CDN -->
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three-globe@2.24.0/dist/three-globe.min.js"></script>
+
+  <script>
+    // ========== GLOBAL STATE ==========
+    const state = {
+      battles: [],
+      chapters: [],
+      translations: {},
+      currentLang: localStorage.getItem('language') || 'en',
+      selectedYear: 1942,
+      selectedTheater: 'all',
+      searchQuery: '',
+      isCumulative: false,
+      showCampaigns: true,
+      showEngagements: true,
+      isPlaying: false,
+      playInterval: null,
+      selectedBattle: null,
+      currentChapter: null,
+      currentStep: 0,
+      isChapterPlaying: false,
+      chapterPlayInterval: null,
+      globe: null,
+      prefersReducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    };
+
+    // ========== TRANSLATION HELPER ==========
+    function t(key) {
+      return (state.translations[state.currentLang] && state.translations[state.currentLang][key]) || key;
+    }
+
+    // ========== DATA LOADING ==========
+    async function loadData() {
+      try {
+        // Load translations
+        const i18nResponse = await fetch('./i18n.json').catch(() => null);
+        if (i18nResponse && i18nResponse.ok) {
+          state.translations = await i18nResponse.json();
+        } else {
+          // Fallback embedded translations
+          state.translations = {
+            en: {
+              title: "WWII Battles Globe",
+              search_placeholder: "Search battle, place, country…",
+              theater: "Theater",
+              year: "Year",
+              cumulative: "Cumulative",
+              chapters: "Chapters",
+              play: "Play",
+              pause: "Pause",
+              layers: "Layers",
+              campaigns: "Campaigns",
+              engagements: "Engagements",
+              list_view: "List View",
+              details: "Details",
+              date: "Date",
+              location: "Location",
+              outcome: "Outcome",
+              belligerents: "Belligerents",
+              casualties: "Casualties",
+              casualties_range: "Casualties (low–high)",
+              theme_hc: "High Contrast",
+              language: "Language",
+              no_results: "No battles match your filters.",
+              type: "Type",
+              theater_label: "Theater",
+              summary: "Summary"
+            }
+          };
+        }
+
+        // Load battles
+        const battlesResponse = await fetch('./battles.json').catch(() => null);
+        if (battlesResponse && battlesResponse.ok) {
+          state.battles = await battlesResponse.json();
+        } else {
+          // Fallback sample data
+          state.battles = getSampleBattles();
+        }
+
+        // Load chapters
+        const chaptersResponse = await fetch('./chapters.json').catch(() => null);
+        if (chaptersResponse && chaptersResponse.ok) {
+          state.chapters = await chaptersResponse.json();
+        }
+
+        initializeUI();
+        initializeGlobe();
+      } catch (error) {
+        console.error('Error loading data:', error);
+        state.battles = getSampleBattles();
+        initializeUI();
+        initializeGlobe();
+      }
+    }
+
+    // Sample battles data (fallback)
+    function getSampleBattles() {
+      return [
+        {
+          id: "stalingrad",
+          name: "Battle of Stalingrad",
+          date: "1942-08-23",
+          year: 1942,
+          theater: "Europe",
+          type: "campaign",
+          lat: 48.708,
+          lon: 44.514,
+          location: "Volgograd, Russia",
+          belligerents: ["Soviet Union", "Nazi Germany"],
+          outcome: "Soviet victory",
+          casualties_est: 2000000,
+          casualties_low: 1800000,
+          casualties_high: 2500000,
+          summary: "One of the bloodiest battles in history. Soviet victory marked the beginning of German retreat on the Eastern Front.",
+          links: [{ label: "Wikipedia", url: "https://en.wikipedia.org/wiki/Battle_of_Stalingrad" }]
+        },
+        {
+          id: "normandy",
+          name: "Battle of Normandy (D-Day)",
+          date: "1944-06-06",
+          year: 1944,
+          theater: "Europe",
+          type: "campaign",
+          lat: 49.3,
+          lon: -0.5,
+          location: "Normandy, France",
+          belligerents: ["Allies", "Nazi Germany"],
+          outcome: "Allied victory",
+          casualties_est: 425000,
+          casualties_low: 400000,
+          casualties_high: 450000,
+          summary: "The largest amphibious invasion in military history, marking the beginning of the liberation of Western Europe.",
+          links: [{ label: "Wikipedia", url: "https://en.wikipedia.org/wiki/Operation_Overlord" }]
+        },
+        {
+          id: "midway",
+          name: "Battle of Midway",
+          date: "1942-06-04",
+          year: 1942,
+          theater: "Pacific",
+          type: "engagement",
+          lat: 28.2,
+          lon: -177.4,
+          location: "Midway Atoll, Pacific Ocean",
+          belligerents: ["United States", "Japan"],
+          outcome: "American victory",
+          casualties_est: 3000,
+          casualties_low: 2800,
+          casualties_high: 3500,
+          summary: "A decisive naval battle that permanently weakened Japanese naval power.",
+          links: [{ label: "Wikipedia", url: "https://en.wikipedia.org/wiki/Battle_of_Midway" }]
+        },
+        {
+          id: "pearl",
+          name: "Attack on Pearl Harbor",
+          date: "1941-12-07",
+          year: 1941,
+          theater: "Pacific",
+          type: "engagement",
+          lat: 21.3,
+          lon: -157.8,
+          location: "Oahu, Hawaii, USA",
+          belligerents: ["Japan", "United States"],
+          outcome: "Japanese tactical victory",
+          casualties_est: 2400,
+          summary: "Japanese surprise attack that brought the United States into World War II.",
+          links: [{ label: "Wikipedia", url: "https://en.wikipedia.org/wiki/Attack_on_Pearl_Harbor" }]
+        },
+        {
+          id: "el-alamein",
+          name: "Second Battle of El Alamein",
+          date: "1942-10-23",
+          year: 1942,
+          theater: "Africa",
+          type: "campaign",
+          lat: 30.8,
+          lon: 28.9,
+          location: "El Alamein, Egypt",
+          belligerents: ["Allies", "Axis"],
+          outcome: "Allied victory",
+          casualties_est: 30000,
+          casualties_low: 25000,
+          casualties_high: 35000,
+          summary: "A major victory for the Allies in North Africa, stopping Axis advances.",
+          links: [{ label: "Wikipedia", url: "https://en.wikipedia.org/wiki/Second_Battle_of_El_Alamein" }]
+        },
+        {
+          id: "kursk",
+          name: "Battle of Kursk",
+          date: "1943-07-05",
+          year: 1943,
+          theater: "Europe",
+          type: "campaign",
+          lat: 51.73,
+          lon: 36.193,
+          location: "Kursk, Russia",
+          belligerents: ["Soviet Union", "Nazi Germany"],
+          outcome: "Soviet victory",
+          casualties_est: 800000,
+          casualties_low: 700000,
+          casualties_high: 1000000,
+          summary: "Largest tank battle in history. The Soviet counteroffensive begins.",
+          links: [{ label: "Wikipedia", url: "https://en.wikipedia.org/wiki/Battle_of_Kursk" }]
+        }
+      ];
+    }
+
+    // ========== UI INITIALIZATION ==========
+    function initializeUI() {
+      updateTranslations();
+      
+      // Set initial language
+      document.getElementById('language-select').value = state.currentLang;
+      
+      // Populate chapters dropdown
+      populateChapters();
+      
+      // Event listeners
+      document.getElementById('search-input').addEventListener('input', debounce(handleSearch, 300));
+      document.getElementById('theater-filter').addEventListener('change', handleTheaterChange);
+      document.getElementById('year-slider').addEventListener('input', handleYearChange);
+      document.getElementById('cumulative-mode').addEventListener('change', handleCumulativeToggle);
+      document.getElementById('show-campaigns').addEventListener('change', handleLayerToggle);
+      document.getElementById('show-engagements').addEventListener('change', handleLayerToggle);
+      document.getElementById('play-pause').addEventListener('click', togglePlay);
+      document.getElementById('hc-toggle').addEventListener('change', toggleHighContrast);
+      document.getElementById('language-select').addEventListener('change', handleLanguageChange);
+      document.getElementById('close-panel').addEventListener('click', closePanel);
+      
+      // Tab switching
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn));
+      });
+      
+      // Chapter controls
+      document.getElementById('chapter-select').addEventListener('change', handleChapterSelect);
+      document.getElementById('chapter-prev').addEventListener('click', () => navigateChapter(-1));
+      document.getElementById('chapter-next').addEventListener('click', () => navigateChapter(1));
+      document.getElementById('chapter-play').addEventListener('click', toggleChapterPlay);
+      
+      // Keyboard shortcuts
+      document.addEventListener('keydown', handleKeyboard);
+      
+      // Restore high contrast preference
+      if (localStorage.getItem('highContrast') === 'true') {
+        document.getElementById('hc-toggle').checked = true;
+        document.body.setAttribute('data-theme', 'hc');
+      }
+      
+      // Disable autoplay if reduced motion preferred
+      if (state.prefersReducedMotion) {
+        console.log('Reduced motion detected - autoplay disabled');
+      }
+    }
+
+    function updateTranslations() {
+      // Update all translatable text
+      document.getElementById('app-title').textContent = t('title');
+      document.getElementById('search-input').placeholder = t('search_placeholder');
+      document.getElementById('search-label').textContent = t('search') + ':';
+      document.getElementById('theater-label').textContent = t('theater') + ':';
+      document.getElementById('year-label').textContent = t('year') + ':';
+      document.getElementById('cumulative-label').textContent = t('cumulative');
+      document.getElementById('campaigns-label').textContent = t('campaigns');
+      document.getElementById('engagements-label').textContent = t('engagements');
+      document.getElementById('chapters-label').textContent = t('chapters') + ':';
+      document.getElementById('theme-hc-label').textContent = t('theme_hc');
+      document.getElementById('language-label').textContent = t('language') + ':';
+      document.getElementById('details-tab-label').textContent = t('details');
+      document.getElementById('list-tab-label').textContent = t('list_view');
+      document.getElementById('layers-label').textContent = t('layers') + ':';
+      
+      // Update table headers
+      document.getElementById('col-name').textContent = t('name') || 'Name';
+      document.getElementById('col-date').textContent = t('date');
+      document.getElementById('col-type').textContent = t('type');
+      document.getElementById('col-casualties').textContent = t('casualties');
+      
+      // Update play button
+      updatePlayButton();
+      
+      // Refresh list view if open
+      if (document.getElementById('list-content').classList.contains('active')) {
+        updateListView();
+      }
+    }
+
+    function populateChapters() {
+      const select = document.getElementById('chapter-select');
+      select.innerHTML = '<option value="">Select a chapter...</option>';
+      
+      if (state.chapters.length === 0) {
+        select.disabled = true;
+        select.innerHTML = '<option value="">(No chapters available)</option>';
+      } else {
+        state.chapters.forEach(chapter => {
+          const option = document.createElement('option');
+          option.value = chapter.id;
+          option.textContent = chapter.title;
+          select.appendChild(option);
+        });
+      }
+    }
+
+    // ========== GLOBE INITIALIZATION ==========
+    function initializeGlobe() {
+      const container = document.getElementById('globe-container');
+      
+      // Initialize globe
+      state.globe = new ThreeGlobeGlobe()
+        .globeImageUrl('https://unpkg.com/three-globe@2.24.0/example/img/earth-blue-marble.jpg')
+        .bumpImageUrl('https://unpkg.com/three-globe@2.24.0/example/img/earth-topology.png')
+        .backgroundImageUrl('https://unpkg.com/three-globe@2.24.0/example/img/night-sky.png');
+
+      // Setup renderer
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      // Setup camera
+      const camera = new THREE.PerspectiveCamera(
+        50,
+        container.clientWidth / container.clientHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 300;
+
+      // Setup scene
+      const scene = new THREE.Scene();
+      scene.add(state.globe);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 3, 5);
+      scene.add(directionalLight);
+
+      // Controls for mouse interaction
+      let isDragging = false;
+      let previousMouse = { x: 0, y: 0 };
+
+      renderer.domElement.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        previousMouse = { x: e.clientX, y: e.clientY };
+      });
+
+      renderer.domElement.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - previousMouse.x;
+        const deltaY = e.clientY - previousMouse.y;
+        state.globe.rotation.y += deltaX * 0.005;
+        state.globe.rotation.x += deltaY * 0.005;
+        previousMouse = { x: e.clientX, y: e.clientY };
+      });
+
+      renderer.domElement.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      // Touch support
+      renderer.domElement.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          previousMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      });
+
+      renderer.domElement.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        e.preventDefault();
+        const deltaX = e.touches[0].clientX - previousMouse.x;
+        const deltaY = e.touches[0].clientY - previousMouse.y;
+        state.globe.rotation.y += deltaX * 0.005;
+        state.globe.rotation.x += deltaY * 0.005;
+        previousMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      });
+
+      renderer.domElement.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+
+      // Raycaster for clicking markers
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      renderer.domElement.addEventListener('click', (e) => {
+        if (Math.abs(e.clientX - previousMouse.x) > 5) return; // Was dragging
+        
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        
+        raycaster.setFromCamera(mouse, camera);
+        // Intersection logic handled by three-globe's onClick
+      });
+
+      // Window resize
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Store references
+      state.globe._renderer = renderer;
+      state.globe._camera = camera;
+      state.globe._scene = scene;
+
+      // Remove loading indicator
+      document.getElementById('loading').style.display = 'none';
+
+      // Initial render
+      updateGlobeData();
+    }
+
+    // ========== GLOBE DATA UPDATES ==========
+    function updateGlobeData() {
+      const filtered = getFilteredBattles();
+      
+      // Update points data with campaigns and engagements
+      state.globe
+        .pointsData(filtered)
+        .pointLat('lat')
+        .pointLng('lon')
+        .pointAltitude(d => {
+          // Height based on casualties (log scale)
+          const casualties = d.casualties_est || 1000;
+          return Math.log10(casualties) * 0.05;
+        })
+        .pointRadius(d => d.type === 'campaign' ? 0.5 : 0.3)
+        .pointColor(d => getTheaterColor(d.theater))
+        .pointLabel(d => `
+          <div style="background: white; padding: 12px; border-radius: 8px; color: #333; max-width: 200px;">
+            <strong>${d.name}</strong><br>
+            <small>${d.location || ''}</small><br>
+            <small>${d.date || d.year}</small>
+          </div>
+        `)
+        .onPointClick(battle => {
+          selectBattle(battle);
+        });
+
+      // Add custom objects for campaigns (rings) vs engagements (spikes)
+      state.globe
+        .customLayerData(filtered)
+        .customThreeObject(d => {
+          if (d.type === 'campaign') {
+            // Ring for campaigns
+            const ring = new THREE.Mesh(
+              new THREE.RingGeometry(0.3, 0.5, 32),
+              new THREE.MeshBasicMaterial({
+                color: getTheaterColor(d.theater),
+                transparent: true,
+                opacity: 0.6,
+                side: THREE.DoubleSide
+              })
+            );
+            return ring;
+          } else {
+            // Spike for engagements (already handled by pointsData)
+            return null;
+          }
+        })
+        .customThreeObjectUpdate((obj, d) => {
+          if (!obj) return;
+          
+          // Position the ring
+          const lat = d.lat * Math.PI / 180;
+          const lng = d.lon * Math.PI / 180;
+          const altitude = Math.log10(d.casualties_est || 1000) * 0.05 + 0.1;
+          const radius = 100 + altitude * 100;
+          
+          obj.position.x = radius * Math.cos(lat) * Math.cos(lng);
+          obj.position.y = radius * Math.sin(lat);
+          obj.position.z = radius * Math.cos(lat) * Math.sin(lng);
+          
+          // Make ring face outward
+          obj.lookAt(0, 0, 0);
+        });
+
+      // Update list view
+      updateListView();
+    }
+
+    function getFilteredBattles() {
+      return state.battles.filter(battle => {
+        // Year filter (cumulative or exact)
+        const yearMatch = state.isCumulative 
+          ? battle.year <= state.selectedYear
+          : battle.year === state.selectedYear;
+        
+        if (!yearMatch) return false;
+
+        // Theater filter
+        if (state.selectedTheater !== 'all' && battle.theater !== state.selectedTheater) {
+          return false;
+        }
+
+        // Type/layer filter
+        const battleType = battle.type || 'engagement';
+        if (battleType === 'campaign' && !state.showCampaigns) return false;
+        if (battleType === 'engagement' && !state.showEngagements) return false;
+
+        // Search filter
+        if (state.searchQuery) {
+          const query = state.searchQuery.toLowerCase();
+          const searchable = [
+            battle.name,
+            battle.location,
+            battle.theater,
+            ...(battle.belligerents || [])
+          ].join(' ').toLowerCase();
+          
+          if (!searchable.includes(query)) return false;
+        }
+
+        return true;
+      });
+    }
+
+    function getTheaterColor(theater) {
+      const colors = {
+        'Europe': '#e74c3c',
+        'Pacific': '#3498db',
+        'Africa': '#f39c12',
+        'Asia': '#1abc9c',
+        'Atlantic': '#9b59b6',
+        'Arctic': '#ecf0f1',
+        'Middle East': '#e67e22'
+      };
+      return colors[theater] || '#95a5a6';
+    }
+
+    // ========== EVENT HANDLERS ==========
+    function handleSearch(e) {
+      state.searchQuery = e.target.value;
+      updateGlobeData();
+    }
+
+    function handleTheaterChange(e) {
+      state.selectedTheater = e.target.value;
+      updateGlobeData();
+    }
+
+    function handleYearChange(e) {
+      state.selectedYear = parseInt(e.target.value);
+      document.getElementById('year-display').textContent = state.selectedYear;
+      e.target.setAttribute('aria-valuetext', state.selectedYear);
+      updateGlobeData();
+    }
+
+    function handleCumulativeToggle(e) {
+      state.isCumulative = e.target.checked;
+      updateGlobeData();
+    }
+
+    function handleLayerToggle(e) {
+      state.showCampaigns = document.getElementById('show-campaigns').checked;
+      state.showEngagements = document.getElementById('show-engagements').checked;
+      updateGlobeData();
+    }
+
+    function togglePlay() {
+      state.isPlaying = !state.isPlaying;
+      
+      if (state.isPlaying) {
+        if (state.prefersReducedMotion) {
+          console.log('Autoplay disabled due to reduced motion preference');
+          state.isPlaying = false;
+          return;
+        }
+        
+        state.playInterval = setInterval(() => {
+          if (state.selectedYear < 1945) {
+            state.selectedYear++;
+            document.getElementById('year-slider').value = state.selectedYear;
+            handleYearChange({ target: document.getElementById('year-slider') });
+          } else {
+            togglePlay(); // Stop at end
+          }
+        }, 1000);
+      } else {
+        clearInterval(state.playInterval);
+      }
+      
+      updatePlayButton();
+    }
+
+    function updatePlayButton() {
+      const btn = document.getElementById('play-pause');
+      if (state.isPlaying) {
+        btn.textContent = `⏸️ ${t('pause')}`;
+        btn.setAttribute('aria-label', t('pause') + ' timeline');
+      } else {
+        btn.textContent = `▶️ ${t('play')}`;
+        btn.setAttribute('aria-label', t('play') + ' timeline');
+      }
+    }
+
+    function toggleHighContrast(e) {
+      if (e.target.checked) {
+        document.body.setAttribute('data-theme', 'hc');
+        localStorage.setItem('highContrast', 'true');
+      } else {
+        document.body.removeAttribute('data-theme');
+        localStorage.setItem('highContrast', 'false');
+      }
+    }
+
+    function handleLanguageChange(e) {
+      state.currentLang = e.target.value;
+      localStorage.setItem('language', state.currentLang);
+      updateTranslations();
+      
+      // Re-render current battle details if open
+      if (state.selectedBattle) {
+        selectBattle(state.selectedBattle);
+      }
+    }
+
+    function handleChapterSelect(e) {
+      const chapterId = e.target.value;
+      if (!chapterId) {
+        state.currentChapter = null;
+        document.getElementById('chapter-nav').classList.remove('active');
+        return;
+      }
+      
+      state.currentChapter = state.chapters.find(c => c.id === chapterId);
+      state.currentStep = 0;
+      document.getElementById('chapter-nav').classList.add('active');
+      
+      if (state.currentChapter) {
+        navigateToStep(0);
+      }
+    }
+
+    function navigateChapter(direction) {
+      if (!state.currentChapter) return;
+      
+      const newStep = state.currentStep + direction;
+      if (newStep >= 0 && newStep < state.currentChapter.steps.length) {
+        navigateToStep(newStep);
+      }
+    }
+
+    function navigateToStep(stepIndex) {
+      if (!state.currentChapter || !state.currentChapter.steps[stepIndex]) return;
+      
+      state.currentStep = stepIndex;
+      const step = state.currentChapter.steps[stepIndex];
+      
+      // Update year if specified
+      if (step.year) {
+        state.selectedYear = step.year;
+        document.getElementById('year-slider').value = step.year;
+        handleYearChange({ target: document.getElementById('year-slider') });
+      }
+      
+      // Focus globe on location
+      if (step.focus && state.globe._camera) {
+        const { lat, lon, altitude } = step.focus;
+        const targetAltitude = altitude || 2.0;
+        
+        // Calculate position
+        const phi = (90 - lat) * Math.PI / 180;
+        const theta = (lon + 180) * Math.PI / 180;
+        const distance = 100 * targetAltitude;
+        
+        state.globe._camera.position.x = distance * Math.sin(phi) * Math.cos(theta);
+        state.globe._camera.position.y = distance * Math.cos(phi);
+        state.globe._camera.position.z = distance * Math.sin(phi) * Math.sin(theta);
+        state.globe._camera.lookAt(0, 0, 0);
+      }
+      
+      // Highlight battles
+      if (step.highlight_ids && step.highlight_ids.length > 0) {
+        const highlightedBattle = state.battles.find(b => step.highlight_ids.includes(b.id));
+        if (highlightedBattle) {
+          selectBattle(highlightedBattle);
+        }
+      }
+      
+      // Show narration in details panel
+      if (step.narration) {
+        const detailsContent = document.getElementById('details-content');
+        const narrationDiv = detailsContent.querySelector('.narration') || document.createElement('div');
+        narrationDiv.className = 'narration';
+        narrationDiv.textContent = step.narration;
+        
+        if (!detailsContent.querySelector('.narration')) {
+          detailsContent.insertBefore(narrationDiv, detailsContent.firstChild);
+        }
+        
+        // Open panel
+        document.getElementById('side-panel').classList.add('active');
+      }
+      
+      // Update step counter
+      document.getElementById('chapter-step').textContent = 
+        `${stepIndex + 1}/${state.currentChapter.steps.length}`;
+    }
+
+    function toggleChapterPlay() {
+      state.isChapterPlaying = !state.isChapterPlaying;
+      
+      if (state.isChapterPlaying) {
+        if (state.prefersReducedMotion) {
+          console.log('Chapter autoplay disabled due to reduced motion preference');
+          state.isChapterPlaying = false;
+          return;
+        }
+        
+        const interval = state.currentChapter.autoplay_interval_ms || 3000;
+        state.chapterPlayInterval = setInterval(() => {
+          if (state.currentStep < state.currentChapter.steps.length - 1) {
+            navigateChapter(1);
+          } else {
+            toggleChapterPlay(); // Stop at end
+          }
+        }, interval);
+        
+        document.getElementById('chapter-play').textContent = '⏸️';
+      } else {
+        clearInterval(state.chapterPlayInterval);
+        document.getElementById('chapter-play').textContent = '▶️';
+      }
+    }
+
+    function handleKeyboard(e) {
+      // Don't interfere with input fields
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+        return;
+      }
+      
+      const yearSlider = document.getElementById('year-slider');
+      
+      switch(e.key) {
+        case 'ArrowLeft':
+          if (e.shiftKey) {
+            yearSlider.value = Math.max(1939, parseInt(yearSlider.value) - 5);
+          } else {
+            yearSlider.value = Math.max(1939, parseInt(yearSlider.value) - 1);
+          }
+          handleYearChange({ target: yearSlider });
+          e.preventDefault();
+          break;
+          
+        case 'ArrowRight':
+          if (e.shiftKey) {
+            yearSlider.value = Math.min(1945, parseInt(yearSlider.value) + 5);
+          } else {
+            yearSlider.value = Math.min(1945, parseInt(yearSlider.value) + 1);
+          }
+          handleYearChange({ target: yearSlider });
+          e.preventDefault();
+          break;
+          
+        case '/':
+          document.getElementById('search-input').focus();
+          e.preventDefault();
+          break;
+          
+        case '?':
+          toggleHelp();
+          e.preventDefault();
+          break;
+      }
+    }
+
+    function toggleHelp() {
+      const tooltip = document.getElementById('help-tooltip');
+      tooltip.classList.toggle('active');
+    }
+
+    // ========== BATTLE SELECTION ==========
+    function selectBattle(battle) {
+      state.selectedBattle = battle;
+      
+      // Open panel and switch to details tab
+      document.getElementById('side-panel').classList.add('active');
+      switchTab(document.getElementById('details-tab'));
+      
+      // Populate details
+      const detailsContent = document.getElementById('details-content');
+      
+      const casualtiesDisplay = getCasualtiesDisplay(battle);
+      
+      detailsContent.innerHTML = `
+        <h2 tabindex="-1">${battle.name}</h2>
+        
+        <div class="detail-row">
+          <div class="detail-label">${t('date')}</div>
+          <div class="detail-value">${battle.date || battle.year}</div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-label">${t('location')}</div>
+          <div class="detail-value">${battle.location || 'Unknown'}</div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-label">${t('theater_label')}</div>
+          <div class="detail-value">${battle.theater}</div>
+        </div>
+        
+        <div class="detail-row">
+          <div class="detail-label">${t('type')}</div>
+          <div class="detail-value">
+            <span class="type-badge type-${battle.type || 'engagement'}">
+              ${(battle.type || 'engagement').toUpperCase()}
+            </span>
+          </div>
+        </div>
+        
+        ${battle.belligerents ? `
+          <div class="detail-row">
+            <div class="detail-label">${t('belligerents')}</div>
+            <div class="detail-value">${battle.belligerents.join(', ')}</div>
+          </div>
+        ` : ''}
+        
+        ${battle.outcome ? `
+          <div class="detail-row">
+            <div class="detail-label">${t('outcome')}</div>
+            <div class="detail-value">${battle.outcome}</div>
+          </div>
+        ` : ''}
+        
+        <div class="detail-row">
+          <div class="detail-label">${casualtiesDisplay.label}</div>
+          <div class="detail-value">${casualtiesDisplay.value}</div>
+        </div>
+        
+        ${battle.summary ? `
+          <div class="detail-row">
+            <div class="detail-label">${t('summary')}</div>
+            <div class="detail-value">${battle.summary}</div>
+          </div>
+        ` : ''}
+        
+        ${battle.links && battle.links.length > 0 ? `
+          <div class="links">
+            ${battle.links.map(link => `
+              <a href="${link.url}" target="_blank" rel="noopener" class="link-button">
+                ${link.label}
+              </a>
+            `).join('')}
+          </div>
+        ` : ''}
+      `;
+      
+      // Focus the heading
+      setTimeout(() => {
+        detailsContent.querySelector('h2').focus();
+      }, 100);
+    }
+
+    function getCasualtiesDisplay(battle) {
+      if (battle.casualties_low && battle.casualties_high) {
+        return {
+          label: t('casualties_range'),
+          value: `${battle.casualties_low.toLocaleString()} – ${battle.casualties_high.toLocaleString()}`
+        };
+      } else if (battle.casualties_est) {
+        return {
+          label: t('casualties'),
+          value: battle.casualties_est.toLocaleString()
+        };
+      } else {
+        return {
+          label: t('casualties'),
+          value: 'Unknown'
+        };
+      }
+    }
+
+    function closePanel() {
+      document.getElementById('side-panel').classList.remove('active');
+      state.selectedBattle = null;
+    }
+
+    // ========== TAB MANAGEMENT ==========
+    function switchTab(button) {
+      // Update tab buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
+      button.classList.add('active');
+      button.setAttribute('aria-selected', 'true');
+      
+      // Update tab panels
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+      
+      const targetId = button.getAttribute('aria-controls');
+      document.getElementById(targetId).classList.add('active');
+      
+      // Update list view if switched to it
+      if (targetId === 'list-content') {
+        updateListView();
+      }
+    }
+
+    // ========== LIST VIEW ==========
+    function updateListView() {
+      const tbody = document.querySelector('#battles-table tbody');
+      const filtered = getFilteredBattles();
+      
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="no-results">${t('no_results')}</td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tbody.innerHTML = filtered.map(battle => {
+        const casualtiesDisplay = getCasualtiesDisplay(battle);
+        const isSelected = state.selectedBattle && state.selectedBattle.id === battle.id;
+        
+        return `
+          <tr 
+            tabindex="0" 
+            data-battle-id="${battle.id}"
+            class="${isSelected ? 'selected' : ''}"
+            role="button"
+            aria-label="Select ${battle.name}"
+          >
+            <td>${battle.name}</td>
+            <td>${battle.date || battle.year}</td>
+            <td>
+              <span class="type-badge type-${battle.type || 'engagement'}">
+                ${((battle.type || 'engagement')[0].toUpperCase())}
+              </span>
+            </td>
+            <td>${casualtiesDisplay.value}</td>
+          </tr>
+        `;
+      }).join('');
+      
+      // Add event listeners
+      tbody.querySelectorAll('tr').forEach(row => {
+        const battleId = row.getAttribute('data-battle-id');
+        if (!battleId) return;
+        
+        const battle = state.battles.find(b => b.id === battleId);
+        
+        row.addEventListener('click', () => {
+          selectBattle(battle);
+        });
+        
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectBattle(battle);
+          }
+        });
+      });
+    }
+
+    // ========== UTILITIES ==========
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // ========== SERVICE WORKER REGISTRATION ==========
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(registration => {
+            console.log('Service Worker registered successfully:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+
+    // ========== INITIALIZATION ==========
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>
