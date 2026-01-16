@@ -2,6 +2,8 @@
 
 An interactive 3D globe visualization of major World War II battles with guided tours, filters, and offline support.
 
+**🎓 Now integrated into [Cronx Academy](https://github.com/obaptiste/Cronx-Academy)** - See [CRONX_ACADEMY_INTEGRATION.md](./CRONX_ACADEMY_INTEGRATION.md) for details.
+
 ## Features
 
 - **Interactive 3D Globe**: Rotate and explore Earth with battle markers positioned at actual locations
