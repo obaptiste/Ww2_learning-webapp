@@ -1149,8 +1149,37 @@
       state.globe._camera = camera;
       state.globe._scene = scene;
 
-      // Remove loading indicator
-      document.getElementById('loading').style.display = 'none';
+      // Wait for globe textures to load before hiding loading screen
+      let loadingHidden = false;
+      const hideLoading = () => {
+        if (!loadingHidden) {
+          loadingHidden = true;
+          document.getElementById('loading').style.display = 'none';
+        }
+      };
+
+      // Check if globe is ready by waiting for a few render frames
+      // This ensures textures have started loading and rendering
+      let frameCount = 0;
+      const checkGlobeReady = () => {
+        frameCount++;
+        // Wait for at least 10 frames to ensure textures are loaded
+        if (frameCount >= 10) {
+          hideLoading();
+        } else {
+          requestAnimationFrame(checkGlobeReady);
+        }
+      };
+
+      // Start checking after a short delay to allow texture loading to begin
+      setTimeout(() => {
+        requestAnimationFrame(checkGlobeReady);
+      }, 100);
+
+      // Fallback timeout - hide loading screen after 10 seconds regardless
+      setTimeout(() => {
+        hideLoading();
+      }, 10000);
 
       // Initial render
       updateGlobeData();
